@@ -1,0 +1,22 @@
+{
+  "name": "4-33-",
+  "version": "1.0.0",
+  "description": "A silent fxhash project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://revdancatt@github.com/revdancatt/4-33-.git"
+  },
+  "author": "revdancatt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/revdancatt/4-33-/issues"
+  },
+  "homepage": "https://github.com/revdancatt/4-33-#readme",
+  "devDependencies": {
+    "standard": "^17.0.0"
+  }
+}
