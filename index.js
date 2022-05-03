@@ -21,7 +21,7 @@ const startTime = new Date().getTime() // so we can figure out how long since th
 const maxTime = ((4 * 60) + 33) * 1000
 // const maxTime = ((4 * 60) + 33) * 1000
 let drawn = false
-let paperDrawn = false
+let snapshotDrawn = false
 let highRes = false // display high or low res
 const features = {}
 let nextFrame = null
@@ -194,6 +194,15 @@ const layoutCanvas = async () => {
   canvas.style.left = `${(wWidth - cWidth) / 2}px`
   canvas.style.top = `${(wHeight - cHeight) / 2}px`
 
+  const snapshot = document.getElementById('snapshot')
+  snapshot.width = canvas.width
+  snapshot.height = canvas.height
+  snapshot.style.position = 'absolute'
+  snapshot.style.width = `${cWidth}px`
+  snapshot.style.height = `${cHeight}px`
+  snapshot.style.left = `${(wWidth - cWidth) / 2}px`
+  snapshot.style.top = `${(wHeight - cHeight) / 2}px`
+
   //  Re-Create the paper pattern
   const paper1 = document.createElement('canvas')
   paper1.width = canvas.width / 2
@@ -213,41 +222,46 @@ const layoutCanvas = async () => {
 }
 
 const drawPaper = async () => {
-  // Grab all the canvas stuff
-  const canvas = document.getElementById('target')
-  const ctx = canvas.getContext('2d')
-  const w = canvas.width
-  const h = canvas.height
+  const targets = ['target']
+  if (!snapshotDrawn) targets.push('snapshot')
 
-  //  Set the line width
-  ctx.globalCompositeOperation = 'source-over'
-  ctx.lineWidth = w / (maxTime / 1000) / 2
-  //  Lay down the first paper texture
-  ctx.fillStyle = features.paper1Pattern
-  ctx.save()
-  ctx.translate(-w * features.paperOffset.paper1.x, -h * features.paperOffset.paper1.y)
-  ctx.fillRect(0, 0, w * 2, h * 2)
-  ctx.restore()
+  for (const target of targets) {
+    // Grab all the canvas stuff
+    const canvas = document.getElementById(target)
+    const ctx = canvas.getContext('2d')
+    const w = canvas.width
+    const h = canvas.height
 
-  //  Lay down the second paper texture
-  ctx.globalCompositeOperation = 'darken'
-  ctx.fillStyle = features.paper2Pattern
-  ctx.save()
-  ctx.translate(-w * features.paperOffset.paper1.x, -h * features.paperOffset.paper1.y)
-  ctx.fillRect(0, 0, w * 2, h * 2)
-  ctx.restore()
-  ctx.globalCompositeOperation = 'source-over'
-
-  //  If we want to modify the colour, i.e. for riso pink, do that here
-  if (features.background) {
-    ctx.globalCompositeOperation = 'screen'
-    ctx.fillStyle = `hsla(${features.background}, 100%, 50%, 1)`
-    ctx.fillRect(0, 0, w, h)
+    //  Set the line width
     ctx.globalCompositeOperation = 'source-over'
+    ctx.lineWidth = w / (maxTime / 1000) / 2
+    //  Lay down the first paper texture
+    ctx.fillStyle = features.paper1Pattern
+    ctx.save()
+    ctx.translate(-w * features.paperOffset.paper1.x, -h * features.paperOffset.paper1.y)
+    ctx.fillRect(0, 0, w * 2, h * 2)
+    ctx.restore()
+
+    //  Lay down the second paper texture
+    ctx.globalCompositeOperation = 'darken'
+    ctx.fillStyle = features.paper2Pattern
+    ctx.save()
+    ctx.translate(-w * features.paperOffset.paper1.x, -h * features.paperOffset.paper1.y)
+    ctx.fillRect(0, 0, w * 2, h * 2)
+    ctx.restore()
+    ctx.globalCompositeOperation = 'source-over'
+
+    //  If we want to modify the colour, i.e. for riso pink, do that here
+    if (features.background) {
+      ctx.globalCompositeOperation = 'screen'
+      ctx.fillStyle = `hsla(${features.background}, 100%, 50%, 1)`
+      ctx.fillRect(0, 0, w, h)
+      ctx.globalCompositeOperation = 'source-over'
+    }
   }
 
-  if (!paperDrawn) {
-    paperDrawn = true
+  if (!snapshotDrawn) {
+    snapshotDrawn = true
     try {
       fxpreview()
     } catch (er) {
